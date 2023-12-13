@@ -10,8 +10,9 @@ trade_data = pd.read_csv('trade_translated.csv')
 def extract_unique_values(df, column):
     materials = set()
     for items in df[column].dropna().unique():
+        # Split by space and remove commas
         for item in str(items).split():
-            materials.add(item)
+            materials.add(item.replace(',', ''))
     return materials
 
 # Function to plot a bar chart of materials
@@ -36,12 +37,12 @@ def main():
         lat_column, lon_column = 'latitude', 'longitude'
 
     # Extract unique materials and places
-    unique_materials = extract_unique_values(data_to_display, 'Material_translated')
+    unique_materials = extract_unique_values(data_to_display, 'Material')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
-    # Widgets for material and place selection
-    selected_materials = st.multiselect('Select Materials', list(unique_materials))
-    selected_places = st.multiselect('Select Places', list(unique_places))
+    # Initialize multi-select widgets with all options selected by default
+    selected_materials = st.multiselect('Select Materials', list(unique_materials), default=list(unique_materials))
+    selected_places = st.multiselect('Select Places', list(unique_places), default=list(unique_places))
 
     # Filter data based on the selections
     filtered_data = data_to_display[
