@@ -83,7 +83,7 @@ def main():
 
     # Adjust filter logic for drop-down selection
     filtered_data = data_to_display[
-        (data_to_display['Material'].apply(lambda x: selected_material in str(x)) if selected_material != 'All' else True) &
+        (data_to_display['Material_translated'].apply(lambda x: selected_material in str(x)) if selected_material != 'All' else True) &
         (data_to_display['Plats'] == selected_place if selected_place != 'All' else True)
     ]
 
