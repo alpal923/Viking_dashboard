@@ -5,8 +5,10 @@ import geopandas as gpd
 from shapely.geometry import Point
 
 # Read the data
-war_data = pd.read_csv('war_translated.csv')
-trade_data = pd.read_csv('trade_translated.csv')
+war_full = pd.read_csv('war_translated.csv')
+war_data = war_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
+trade_full = pd.read_csv('trade_translated.csv')
+trade_data = trade_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
 
 # Function to extract unique values from a DataFrame column
 def extract_unique_values(df, column):
