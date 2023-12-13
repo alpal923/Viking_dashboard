@@ -61,7 +61,7 @@ def plot_objects_per_year(df):
 
 # Streamlit app
 def main():
-    st.title('Viking Artifatcs')
+    st.title('Viking Artifacts')
 
     # Choose between war data and trade data
     data_choice = st.radio("Choose the dataset", ('War Data', 'Trade Data'))
