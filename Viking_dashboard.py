@@ -19,47 +19,44 @@ def extract_unique_values(df, column):
             materials.add(item.replace(',', '').strip())
     return materials
 
-# Function to plot a bar chart of materials
-def plot_materials_bar_chart(df):
-    material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
-    plt.figure(figsize=(10, 6))
-    material_counts.plot(kind='bar')
-    st.pyplot(plt)
-
-# Updated Function to plot and display the map
 def plot_map(df_filtered, lat_col, lon_col):
-    # Convert DataFrame to GeoDataFrame
-    geometry = [Point(xy) for xy in zip(df_filtered[lon_col], df_filtered[lat_col])]
-    geo_df = gpd.GeoDataFrame(df_filtered, geometry=geometry)
+    if not df_filtered[[lat_col, lon_col]].dropna().empty:
+        # Convert DataFrame to GeoDataFrame
+        geometry = [Point(xy) for xy in zip(df_filtered[lon_col], df_filtered[lat_col])]
+        geo_df = gpd.GeoDataFrame(df_filtered, geometry=geometry)
 
-    # Load world basemap (update path to your shapefile)
-    world = gpd.read_file('path/to/ne_110m_admin_0_countries.shp')
+        # Load world basemap (update path to your shapefile)
+        world = gpd.read_file('path/to/ne_110m_admin_0_countries.shp')
 
-    # Europe boundaries
-    europe_bounds = {
-        "min_lon": -25.0,
-        "max_lon": 40.0,
-        "min_lat": 34.0,
-        "max_lat": 71.0
-    }
+        # Europe boundaries
+        europe_bounds = {
+            "min_lon": -25.0,
+            "max_lon": 40.0,
+            "min_lat": 34.0,
+            "max_lat": 71.0
+        }
 
-    fig, ax = plt.subplots(figsize=(15, 10))
-    world.plot(ax=ax, color='lightgrey', edgecolor='black')
-    geo_df.plot(ax=ax, color='blue', markersize=5)
-    ax.set_xlim(europe_bounds["min_lon"], europe_bounds["max_lon"])
-    ax.set_ylim(europe_bounds["min_lat"], europe_bounds["max_lat"])
-    plt.title('Locations in Europe')
-    return fig
+        fig, ax = plt.subplots(figsize=(15, 10))
+        world.plot(ax=ax, color='lightgrey', edgecolor='black')
+        geo_df.plot(ax=ax, color='blue', markersize=5)
+        ax.set_xlim(europe_bounds["min_lon"], europe_bounds["max_lon"])
+        ax.set_ylim(europe_bounds["min_lat"], europe_bounds["max_lat"])
+        plt.title('Locations in Europe')
+        return fig
+    else:
+        st.write("No geographic data available to display.")
 
-# Function to plot the count of objects found per year
 def plot_objects_per_year(df):
-    yearly_counts = df['year_uncovered'].value_counts().sort_index()
-    plt.figure(figsize=(10, 6))
-    yearly_counts.plot(kind='line')
-    plt.xlabel('Year Uncovered')
-    plt.ylabel('Number of Objects Found')
-    plt.title('Count of Objects Found Per Year')
-    st.pyplot(plt)
+    if 'year_uncovered' in df.columns and not df['year_uncovered'].dropna().empty:
+        yearly_counts = df['year_uncovered'].value_counts().sort_index()
+        plt.figure(figsize=(10, 6))
+        yearly_counts.plot(kind='line')
+        plt.xlabel('Year Uncovered')
+        plt.ylabel('Number of Objects Found')
+        plt.title('Count of Objects Found Per Year')
+        st.pyplot(plt)
+    else:
+        st.write("No data on the year of object discovery available to display.")
 
 # Streamlit app
 def main():
