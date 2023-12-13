@@ -7,6 +7,7 @@ from shapely.geometry import Point
 # Read the data
 war_full = pd.read_csv('war_translated.csv')
 war_data = war_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
+war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"})
 trade_full = pd.read_csv('trade_translated.csv')
 trade_data = trade_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'latitude', 'longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
 
@@ -16,12 +17,12 @@ def extract_unique_values(df, column):
     for items in df[column].dropna().unique():
         # Split by space and remove commas
         for item in str(items).split():
-            materials.add(item.replace(',', ''))
+            materials.add(item.replace(',', '').strip())
     return materials
 
 # Function to plot a bar chart of materials
 def plot_materials_bar_chart(df):
-    material_counts = df['Material_translated'].str.split().explode().value_counts()
+    material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
     plt.figure(figsize=(10, 6))
     material_counts.plot(kind='bar')
     st.pyplot(plt)
@@ -70,24 +71,32 @@ def main():
 
     if data_choice == 'War Data':
         data_to_display = war_data
-        lat_column, lon_column = 'plats_latitude', 'plats_longitude'
     else:
         data_to_display = trade_data
-        lat_column, lon_column = 'latitude', 'longitude'
 
     # Extract unique materials and places
     unique_materials = extract_unique_values(data_to_display, 'Material_translated')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
-    # Drop-down list for material and place selection
-    selected_material = st.selectbox('Select Material', ['All'] + list(unique_materials))
-    selected_place = st.selectbox('Select Place', ['All'] + list(unique_places))
+    all_materials = list(unique_materials)
+    all_places = list(unique_places)
 
-    # Adjust filter logic for drop-down selection
-    filtered_data = data_to_display[
-        (data_to_display['Material_translated'].apply(lambda x: selected_material in str(x)) if selected_material != 'All' else True) &
-        (data_to_display['Plats'] == selected_place if selected_place != 'All' else True)
-    ]
+    # Set default to all materials
+    selected_materials = st.multiselect('Select Materials', all_materials, default=all_materials)
+    selected_places = st.multiselect('Select Places', all_places, default=all_places)
+
+    # Filter data based on selected materials and places
+    if len(selected_materials) == len(all_materials):
+        material_filter = True
+    else:
+        material_filter = data_to_display['Material_translated'].apply(lambda x: any(material in str(x) for material in selected_materials))
+
+    if len(selected_places) == len(all_places):
+        place_filter = True
+    else:
+        place_filter = data_to_display['Plats'].isin(selected_places)
+
+    filtered_data = data_to_display[material_filter & place_filter]
 
     # Displaying the map
     if not filtered_data[[lat_column, lon_column]].dropna().empty:
