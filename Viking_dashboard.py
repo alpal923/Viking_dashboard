@@ -7,7 +7,6 @@ from shapely.geometry import Point
 # Read the data
 war_full = pd.read_csv('war_translated.csv')
 war_data = war_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
-war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"})
 trade_full = pd.read_csv('trade_translated.csv')
 trade_data = trade_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'latitude', 'longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
 
@@ -66,6 +65,8 @@ def plot_objects_per_year(df):
 def main():
     st.title('Viking Artifacts')
 
+    war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"})
+
     # Choose between war data and trade data
     data_choice = st.radio("Choose the dataset", ('War Data', 'Trade Data'))
 
@@ -82,9 +83,9 @@ def main():
     material_selection_type = st.selectbox('Select Materials', ['Select All', 'Custom Select'])
     place_selection_type = st.selectbox('Select Places', ['Select All', 'Custom Select'])
 
-    # Initialize filters
-    material_filter = True
-    place_filter = True
+    # Initialize filters as a boolean series
+    material_filter = pd.Series([True] * len(data_to_display))
+    place_filter = pd.Series([True] * len(data_to_display))
 
     # Custom selection using multiselect
     if material_selection_type == 'Custom Select':
