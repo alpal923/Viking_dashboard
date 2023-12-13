@@ -74,7 +74,7 @@ def main():
         lat_column, lon_column = 'latitude', 'longitude'
 
     # Extract unique materials and places
-    unique_materials = extract_unique_values(data_to_display, 'Material')
+    unique_materials = extract_unique_values(data_to_display, 'Material_translated')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
     # Drop-down list for material and place selection
@@ -97,7 +97,6 @@ def main():
 
     # Displaying the bar chart for objects found per year
     plot_objects_per_year(filtered_data)
-
 
     st.dataframe(filtered_data)
 
