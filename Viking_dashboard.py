@@ -104,9 +104,12 @@ def main():
     filtered_data = data_to_display[material_filter & place_filter]
 
     # Displaying the map
-    if not filtered_data[['latitude', 'longitude']].dropna().empty:
-        fig = plot_map(filtered_data, 'latitude', 'longitude')
-        st.pyplot(fig)
+    if 'latitude' in filtered_data.columns and 'longitude' in filtered_data.columns:
+        if not filtered_data[['latitude', 'longitude']].dropna().empty:
+            fig = plot_map(filtered_data, 'latitude', 'longitude')
+            st.pyplot(fig)
+        else:
+            st.write("Geographic coordinates are not available.")
 
     # Displaying the bar chart for materials
     plot_materials_bar_chart(filtered_data)
