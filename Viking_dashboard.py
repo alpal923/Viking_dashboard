@@ -8,7 +8,7 @@ from shapely.geometry import Point
 war_full = pd.read_csv('war_translated.csv')
 war_data = war_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
 trade_full = pd.read_csv('trade_translated.csv')
-trade_data = trade_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'plats_latitude', 'plats_longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
+trade_data = trade_full[['Föremålsbenämning_translated', 'Plats', 'Museum', 'Catalog Link', 'latitude', 'longitude', 'Material_translated', 'year_uncovered', 'Era Start Year', 'Era End Year', 'Width', 'Length', 'Thickness', 'Diameter', 'Weight']]
 
 # Function to extract unique values from a DataFrame column
 def extract_unique_values(df, column):
@@ -55,7 +55,7 @@ def plot_map(df_filtered, lat_col, lon_col):
 def plot_objects_per_year(df):
     yearly_counts = df['year_uncovered'].value_counts().sort_index()
     plt.figure(figsize=(10, 6))
-    yearly_counts.plot(kind='bar')
+    yearly_counts.plot(kind='line')
     plt.xlabel('Year Uncovered')
     plt.ylabel('Number of Objects Found')
     plt.title('Count of Objects Found Per Year')
