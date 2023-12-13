@@ -51,7 +51,7 @@ def plot_map(df_filtered, lat_col, lon_col):
 
 # Function to plot the count of objects found per year
 def plot_objects_per_year(df):
-    yearly_counts = df['uncovered_year'].value_counts().sort_index()
+    yearly_counts = df['year_uncovered'].value_counts().sort_index()
     plt.figure(figsize=(10, 6))
     yearly_counts.plot(kind='bar')
     plt.xlabel('Year Uncovered')
