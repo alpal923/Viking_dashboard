@@ -79,19 +79,17 @@ def main():
     unique_materials = extract_unique_values(data_to_display, 'Material_translated')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
-    # Dropdown to select between 'Select All' and 'Custom Select'
-    material_selection_type = st.selectbox('Select Materials', ['Select All', 'Custom Select'])
-    place_selection_type = st.selectbox('Select Places', ['Select All', 'Custom Select'])
-
     # Initialize filters as a boolean series
     material_filter = pd.Series([True] * len(data_to_display))
     place_filter = pd.Series([True] * len(data_to_display))
 
-    # Custom selection using multiselect
+    # Dropdown to select between 'Select All' and 'Custom Select'
+    material_selection_type = st.selectbox('Select Materials', ['Select All', 'Custom Select'])
     if material_selection_type == 'Custom Select':
         selected_materials = st.multiselect('Select Specific Materials', list(unique_materials))
         material_filter = data_to_display['Material_translated'].apply(lambda x: any(material in str(x) for material in selected_materials))
 
+    place_selection_type = st.selectbox('Select Places', ['Select All', 'Custom Select'])
     if place_selection_type == 'Custom Select':
         selected_places = st.multiselect('Select Specific Places', list(unique_places))
         place_filter = data_to_display['Plats'].isin(selected_places)
