@@ -78,29 +78,29 @@ def main():
     unique_materials = extract_unique_values(data_to_display, 'Material_translated')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
-    all_materials = list(unique_materials)
-    all_places = list(unique_places)
+    # Dropdown to select between 'Select All' and 'Custom Select'
+    material_selection_type = st.selectbox('Select Materials', ['Select All', 'Custom Select'])
+    place_selection_type = st.selectbox('Select Places', ['Select All', 'Custom Select'])
 
-    # Set default to all materials
-    selected_materials = st.multiselect('Select Materials', all_materials, default=all_materials)
-    selected_places = st.multiselect('Select Places', all_places, default=all_places)
+    # Initialize filters
+    material_filter = True
+    place_filter = True
 
-    # Filter data based on selected materials and places
-    if len(selected_materials) == len(all_materials):
-        material_filter = True
-    else:
+    # Custom selection using multiselect
+    if material_selection_type == 'Custom Select':
+        selected_materials = st.multiselect('Select Specific Materials', list(unique_materials))
         material_filter = data_to_display['Material_translated'].apply(lambda x: any(material in str(x) for material in selected_materials))
 
-    if len(selected_places) == len(all_places):
-        place_filter = True
-    else:
+    if place_selection_type == 'Custom Select':
+        selected_places = st.multiselect('Select Specific Places', list(unique_places))
         place_filter = data_to_display['Plats'].isin(selected_places)
 
+    # Apply filters to data
     filtered_data = data_to_display[material_filter & place_filter]
 
     # Displaying the map
-    if not filtered_data[[lat_column, lon_column]].dropna().empty:
-        fig = plot_map(filtered_data, lat_column, lon_column)
+    if not filtered_data[['latitude', 'longitude']].dropna().empty:
+        fig = plot_map(filtered_data, 'latitude', 'longitude')
         st.pyplot(fig)
 
     # Displaying the bar chart for materials
