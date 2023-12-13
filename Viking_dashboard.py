@@ -19,6 +19,15 @@ def extract_unique_values(df, column):
             materials.add(item.replace(',', '').strip())
     return materials
 
+def plot_materials_bar_chart(df):
+    if not df['Material_translated'].dropna().empty:
+        material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
+        plt.figure(figsize=(10, 6))
+        material_counts.plot(kind='bar')
+        st.pyplot(plt)
+    else:
+        st.write("No material data available to display.")
+
 def plot_map(df_filtered, lat_col, lon_col):
     if not df_filtered[[lat_col, lon_col]].dropna().empty:
         # Convert DataFrame to GeoDataFrame
@@ -62,7 +71,7 @@ def plot_objects_per_year(df):
 def main():
     st.title('Viking Artifacts')
 
-    war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"})
+    war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"}, inplace=True)
 
     # Choose between war data and trade data
     data_choice = st.radio("Choose the dataset", ('War Data', 'Trade Data'))
