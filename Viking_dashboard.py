@@ -49,6 +49,16 @@ def plot_map(df_filtered, lat_col, lon_col):
     plt.title('Locations in Europe')
     return fig
 
+# Function to plot the count of objects found per year
+def plot_objects_per_year(df):
+    yearly_counts = df['uncovered_year'].value_counts().sort_index()
+    plt.figure(figsize=(10, 6))
+    yearly_counts.plot(kind='bar')
+    plt.xlabel('Year Uncovered')
+    plt.ylabel('Number of Objects Found')
+    plt.title('Count of Objects Found Per Year')
+    st.pyplot(plt)
+
 # Streamlit app
 def main():
     st.title('Viking Artifatcs')
@@ -67,14 +77,14 @@ def main():
     unique_materials = extract_unique_values(data_to_display, 'Material')
     unique_places = extract_unique_values(data_to_display, 'Plats')
 
-    # Initialize multi-select widgets with all options selected by default
-    selected_materials = st.multiselect('Select Materials', list(unique_materials), default=list(unique_materials))
-    selected_places = st.multiselect('Select Places', list(unique_places), default=list(unique_places))
+    # Drop-down list for material and place selection
+    selected_material = st.selectbox('Select Material', ['All'] + list(unique_materials))
+    selected_place = st.selectbox('Select Place', ['All'] + list(unique_places))
 
-    # Filter data based on the selections
+    # Adjust filter logic for drop-down selection
     filtered_data = data_to_display[
-        (data_to_display['Material'].apply(lambda x: any(material in str(x) for material in selected_materials)) if selected_materials else True) &
-        (data_to_display['Plats'].isin(selected_places) if selected_places else True)
+        (data_to_display['Material'].apply(lambda x: selected_material in str(x)) if selected_material != 'All' else True) &
+        (data_to_display['Plats'] == selected_place if selected_place != 'All' else True)
     ]
 
     # Displaying the map
@@ -84,6 +94,10 @@ def main():
 
     # Displaying the bar chart for materials
     plot_materials_bar_chart(filtered_data)
+
+    # Displaying the bar chart for objects found per year
+    plot_objects_per_year(filtered_data)
+
 
     st.dataframe(filtered_data)
 
