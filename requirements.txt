@@ -3,3 +3,5 @@ numpy
 streamlit
 plotly
 matplotlib
+geopandas
+shapely

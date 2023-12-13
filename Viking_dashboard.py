@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import geopandas as gpd
+from shapely.geometry import Point
 
 # Read the data
 war_data = pd.read_csv('war_translated.csv')
@@ -21,6 +23,31 @@ def plot_materials_bar_chart(df):
     plt.figure(figsize=(10, 6))
     material_counts.plot(kind='bar')
     st.pyplot(plt)
+
+# Updated Function to plot and display the map
+def plot_map(df_filtered, lat_col, lon_col):
+    # Convert DataFrame to GeoDataFrame
+    geometry = [Point(xy) for xy in zip(df_filtered[lon_col], df_filtered[lat_col])]
+    geo_df = gpd.GeoDataFrame(df_filtered, geometry=geometry)
+
+    # Load world basemap (update path to your shapefile)
+    world = gpd.read_file('path/to/ne_110m_admin_0_countries.shp')
+
+    # Europe boundaries
+    europe_bounds = {
+        "min_lon": -25.0,
+        "max_lon": 40.0,
+        "min_lat": 34.0,
+        "max_lat": 71.0
+    }
+
+    fig, ax = plt.subplots(figsize=(15, 10))
+    world.plot(ax=ax, color='lightgrey', edgecolor='black')
+    geo_df.plot(ax=ax, color='blue', markersize=5)
+    ax.set_xlim(europe_bounds["min_lon"], europe_bounds["max_lon"])
+    ax.set_ylim(europe_bounds["min_lat"], europe_bounds["max_lat"])
+    plt.title('Locations in Europe')
+    return fig
 
 # Streamlit app
 def main():
@@ -52,7 +79,8 @@ def main():
 
     # Displaying the map
     if not filtered_data[[lat_column, lon_column]].dropna().empty:
-        st.map(filtered_data[[lat_column, lon_column]].dropna())
+        fig = plot_map(filtered_data, lat_column, lon_column)
+        st.pyplot(fig)
 
     # Displaying the bar chart for materials
     plot_materials_bar_chart(filtered_data)
