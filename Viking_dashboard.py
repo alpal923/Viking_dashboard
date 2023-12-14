@@ -64,7 +64,7 @@ def plot_objects_per_year(df):
     if 'year_uncovered' in df.columns and not df['year_uncovered'].dropna().empty:
         yearly_counts = df['year_uncovered'].value_counts().sort_index()
         plt.figure(figsize=(10, 6))
-        yearly_counts.plot(kind='line', color='purple')
+        yearly_counts.plot(kind='line', color='darkgreen')
         plt.xlabel('Year Uncovered')
         plt.ylabel('Number of Objects Found')
         plt.title('Count of Objects Found Per Year')
@@ -78,7 +78,7 @@ def main():
 
     st.header('Intro')
 
-    st.text('This dashbaord allows users to interact with the data scraped off of the Statens Historiska Museer catalog.')
+    st.write('This dashbaord allows users to interact with the data scraped off of the Statens Historiska Museer catalog.')
 
     war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"}, inplace=True)
 
