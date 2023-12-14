@@ -23,8 +23,8 @@ def extract_unique_values(df, column):
 def plot_materials_bar_chart(df):
     if not df['Material_translated'].dropna().empty:
         material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
-        plt.figure(figsize=(10, 6), color='Set2')
-        material_counts.plot(kind='bar')
+        plt.figure(figsize=(10, 6))
+        material_counts.plot(kind='bar', color='Set2')
         st.pyplot(plt)
     else:
         st.write("No material data available to display.")
