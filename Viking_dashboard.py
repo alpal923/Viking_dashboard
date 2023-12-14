@@ -23,7 +23,7 @@ def extract_unique_values(df, column):
 def plot_materials_bar_chart(df):
     if not df['Material_translated'].dropna().empty:
         material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(10, 6), colormap='Set2')
         material_counts.plot(kind='bar')
         st.pyplot(plt)
     else:
@@ -47,7 +47,7 @@ def plot_map(df_filtered, lat_col, lon_col):
         }
 
         fig, ax = plt.subplots(figsize=(15, 10))
-        world.plot(ax=ax, color='lightgrey', edgecolor='black')
+        world.plot(ax=ax, color='lightgreen', edgecolor='darkgreen')
         geo_df.plot(ax=ax, color='blue', markersize=5)
         ax.set_xlim(europe_bounds["min_lon"], europe_bounds["max_lon"])
         ax.set_ylim(europe_bounds["min_lat"], europe_bounds["max_lat"])
@@ -60,7 +60,7 @@ def plot_objects_per_year(df):
     if 'year_uncovered' in df.columns and not df['year_uncovered'].dropna().empty:
         yearly_counts = df['year_uncovered'].value_counts().sort_index()
         plt.figure(figsize=(10, 6))
-        yearly_counts.plot(kind='line')
+        yearly_counts.plot(kind='line', color='purple')
         plt.xlabel('Year Uncovered')
         plt.ylabel('Number of Objects Found')
         plt.title('Count of Objects Found Per Year')
@@ -72,12 +72,16 @@ def plot_objects_per_year(df):
 def main():
     st.title('Viking Artifacts')
 
+    st.header('Intro')
+
+    st.text('This dashbaord allows users to interact with the data scraped off of the Statens Historiska Museer catalog.')
+
     war_data.rename(columns={"plats_latitude": "latitude", "plats_longitude": "longitude"}, inplace=True)
 
     # Choose between war data and trade data
-    data_choice = st.radio("Choose the dataset", ('War Data', 'Trade Data'))
+    data_choice = st.radio("Choose the dataset", ('War Artifacts', 'Trade Artifacts'))
 
-    if data_choice == 'War Data':
+    if data_choice == 'War Artifacts':
         data_to_display = war_data
     else:
         data_to_display = trade_data
@@ -119,6 +123,10 @@ def main():
     plot_objects_per_year(filtered_data)
 
     st.dataframe(filtered_data)
+
+    st.write('To see how this data was scraped, please see [my blog](https://alpal923.github.io/).')
+
+    st.write('Data scraped from [here](https://samlingar.shm.se/sok?type=object&query=vikingatid)')
 
 if __name__ == '__main__':
     main()
