@@ -3,6 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import geopandas as gpd
 from shapely.geometry import Point
+import fiona
 
 # Read the data
 war_full = pd.read_csv('war_translated.csv')
@@ -35,7 +36,7 @@ def plot_map(df_filtered, lat_col, lon_col):
         geo_df = gpd.GeoDataFrame(df_filtered, geometry=geometry)
 
         # Load world basemap (update path to your shapefile)
-        world = gpd.read_file('path/to/ne_110m_admin_0_countries.shp')
+        world = gpd.read_file('ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp')
 
         # Europe boundaries
         europe_bounds = {
