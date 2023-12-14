@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import geopandas as gpd
 from shapely.geometry import Point
 import fiona
+import seaborn as sns
+
+# Get a list of colors from the 'Set2' palette
+palette = sns.color_palette("Set2")
 
 # Read the data
 war_full = pd.read_csv('war_translated.csv')
@@ -24,7 +28,7 @@ def plot_materials_bar_chart(df):
     if not df['Material_translated'].dropna().empty:
         material_counts = df['Material_translated'].str.split(',\s*').explode().value_counts()
         plt.figure(figsize=(10, 6))
-        material_counts.plot(kind='bar', color='Set2')
+        material_counts.plot(kind='bar', color=palette)
         st.pyplot(plt)
     else:
         st.write("No material data available to display.")
